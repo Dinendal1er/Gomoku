@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 
 public class UIManager : MonoBehaviour {
@@ -7,13 +8,16 @@ public class UIManager : MonoBehaviour {
     public  GameObject menuUI;
     public  GameObject optionUI;
     public  GameObject gameOptionUI;
+    public  GameObject gameUI;
 
     private CanvasGroup menuGroup;
     private CanvasGroup optionGroup;
     private CanvasGroup gameOptionGroup;
+    private CanvasGroup gameGroup;
     private bool menuToggle;
     private bool optionToggle;
     private bool gameOptionToggle;
+    private bool gameToggle;
     static private UIManager instance = null;
 
     void Awake()
@@ -40,20 +44,34 @@ public class UIManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        menuGroup = menuUI.GetComponent<CanvasGroup>();
-        if (menuGroup == null)
-            Debug.LogError("Missing the CanvasGroup component on the Menu's UI"); //throw error
-        optionGroup = optionUI.GetComponent<CanvasGroup>();
-        if (optionGroup == null)
-            Debug.LogError("Missing the CanvasGroup component on the Option's UI");
-        gameOptionGroup = gameOptionUI.GetComponent<CanvasGroup>();
-        if (gameOptionGroup == null)
-            Debug.LogError("Missing the CanvasGroup component on the Option's UI");
-        menuToggle = false;
-        optionToggle = false;
-        gameOptionToggle = false;
-        MenuToggle();
-        //OptionToggle();
+        try
+        {
+            menuGroup = menuUI.GetComponent<CanvasGroup>();
+            if (menuGroup == null)
+                throw new NullReferenceException("Missing the CanvasGroup component on the Menu's UI");
+            optionGroup = optionUI.GetComponent<CanvasGroup>();
+            if (optionGroup == null)
+                throw new NullReferenceException("Missing the CanvasGroup component on the Option's UI");
+            gameOptionGroup = gameOptionUI.GetComponent<CanvasGroup>();
+            if (gameOptionGroup == null)
+                throw new NullReferenceException("Missing the CanvasGroup component on the Option's UI");
+            gameGroup = gameUI.GetComponent<CanvasGroup>();
+            if (gameGroup == null)
+                throw new NullReferenceException("Missing the CanvasGroup component on the Game's UI");
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject);
+        }
+        menuToggle = true;
+        optionToggle = true;
+        gameOptionToggle = true;
+        gameToggle = true;
+        OptionToggle();
+        GameOptionToggle();
+        GameToggle();
 	}
 	
     /// <summary>
@@ -84,5 +102,12 @@ public class UIManager : MonoBehaviour {
         gameOptionToggle = !gameOptionToggle;
         gameOptionGroup.alpha = (gameOptionToggle == true) ? 1 : 0;
         gameOptionUI.SetActive(gameOptionToggle);
+    }
+
+    public void GameToggle()
+    {
+        gameToggle = !gameToggle;
+        gameGroup.alpha = (gameToggle == true) ? 1 : 0;
+        gameUI.SetActive(gameToggle);
     }
 }

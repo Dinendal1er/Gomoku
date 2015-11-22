@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class MenuUIManager : MonoBehaviour {
@@ -8,12 +9,22 @@ public class MenuUIManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        UM = UIManager.getInstance();
-        if (UM == null)
-            Debug.LogError("Missing the UIManager"); //throw exception.
-        sm = SoundManager.getInstance();
-        if (sm == null)
-            Debug.LogError("Missing SoundManager");
+
+        try
+        {
+            UM = UIManager.getInstance();
+            if (UM == null)
+                throw new NullReferenceException("Missing the UIManager");
+            sm = SoundManager.getInstance();
+            if (sm == null)
+                throw new NullReferenceException("Missing the SoundManager");
+        }
+        catch(Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
+        }
     }
 
     /// <summary>

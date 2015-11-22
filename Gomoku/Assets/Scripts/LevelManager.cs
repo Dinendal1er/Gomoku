@@ -31,45 +31,75 @@ public class LevelManager : MonoBehaviour {
 
     public void LoadLevel(int index)
     {
-        if (Application.CanStreamedLevelBeLoaded(index))
-            Application.LoadLevel(index);
-        else
+        try
         {
-            Debug.LogError("Level index can't be loaded");
-            //throw Exception("Level index can't  be loaded");
+            if (Application.CanStreamedLevelBeLoaded(index))
+                Application.LoadLevel(index);
+            else
+            {
+                throw new IndexOutOfRangeException("Level index can't be loaded");
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
         }
     }
 
     public void LoadLevel(string levelName)
     {
-        if (Application.CanStreamedLevelBeLoaded(levelName))
-            Application.LoadLevel(levelName);
-        else
+        try
         {
-            Debug.LogError("Level name can't be loaded");
-            //throw Exception("Level name can't  be loaded");
+            if (Application.CanStreamedLevelBeLoaded(levelName))
+                Application.LoadLevel(levelName);
+            else
+            {
+                throw new IndexOutOfRangeException(levelName + " can't be loaded");
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
         }
     }
 
     public void LoadLevelAdditive(int index)
     {
+        try {
         if (Application.CanStreamedLevelBeLoaded(index))
             Application.LoadLevelAdditive(index);
         else
         {
-            Debug.LogError("Level index can't be loaded");
-            //throw Exception("Level index can't  be loaded");
+            throw new IndexOutOfRangeException("Level index can't be loaded");
+        }
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
         }
     }
 
     public void LoadLevelAdditive(string levelName)
     {
-        if (Application.CanStreamedLevelBeLoaded(levelName))
-            Application.LoadLevelAdditive(levelName);
-        else
+        try {
+            if (Application.CanStreamedLevelBeLoaded(levelName))
+                Application.LoadLevelAdditive(levelName);
+            else
+            {
+                throw new IndexOutOfRangeException("Level name can't be loaded");
+            }
+        }
+        catch (Exception e)
         {
-            Debug.LogError("Level name can't be loaded");
-            //throw Exception("Level name can't  be loaded");
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
         }
     }
 

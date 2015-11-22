@@ -22,7 +22,7 @@ public class PawnPool : MonoBehaviour {
         pawnsTPool[1] = (GameObject)Instantiate(prefabs[3], Origin, prefabs[3].transform.localRotation);
         pawnsBPool = new List<KeyValuePair<bool, GameObject>>();
         pawnsWPool = new List<KeyValuePair<bool, GameObject>>();
-        for (int i = 0; i != 60; ++i)
+        for (int i = 0; i != 100; ++i)
         {
             pawnsBPool.Add(new KeyValuePair<bool, GameObject>(true,
             (GameObject)Instantiate(prefabs[0], Origin, prefabs[0].transform.localRotation)));

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class GameOptionUIManager : MonoBehaviour {
@@ -9,12 +10,21 @@ public class GameOptionUIManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        UM = UIManager.getInstance();
-        if (UM == null)
-            Debug.LogError("Missing the UIManager"); //throw exception.
-        sm = SoundManager.getInstance();
-        if (sm == null)
-            Debug.LogError("Missing SoundManager instance"); //throw error
+        try
+        {
+            UM = UIManager.getInstance();
+            if (UM == null)
+                throw new NullReferenceException("Missing the UIManager");
+            sm = SoundManager.getInstance();
+            if (sm == null)
+                throw new NullReferenceException("Missing the SoundManager");
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
+        }
     }
 
     /// <summary>
@@ -25,6 +35,15 @@ public class GameOptionUIManager : MonoBehaviour {
         sm.playButtonEffect();
         UM.GameOptionToggle();
         UM.MenuToggle();
+    }
+
+    
+    public void ToGame()
+    {
+        sm.playButtonEffect();
+        UM.GameOptionToggle();
+        UM.GameToggle();
+        LevelManager.getInstance().LoadLevel("Game_1v1");
     }
 
     //TODO fonction pour aller en jeu.

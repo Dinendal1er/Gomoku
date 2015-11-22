@@ -13,19 +13,36 @@ public class ClickPoint : MonoBehaviour {
     private bool taken = false;
     private PawnPool pool;
 
+    public GameObject Pawn
+    {
+        get
+        {
+            return pawn;
+        }
+    }
+
     void Start()
     {
-        gameManager = GameObject.FindObjectOfType<GameManager>();
-        if (gameManager == null)
-            Debug.Log("Missing the GameManager"); //throw error
-        pool = GameObject.FindObjectOfType<PawnPool>();
-        if (pool == null)
-            Debug.Log("Missing the PawnPool");
+        try
+        {
+            gameManager = GameObject.FindObjectOfType<GameManager>();
+            if (gameManager == null)
+                throw new NullReferenceException("Missing the GameManager"); //throw error
+            pool = GameObject.FindObjectOfType<PawnPool>();
+            if (pool == null)
+                throw new NullReferenceException("Missing the PawnPool");
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(GameObject.Find("UIManager"));
+        }
     }
 
     void OnMouseEnter()
     {
-        if (pawn == null && !taken)
+        if (gameManager != null && !gameManager.IsPaused && pawn == null && !taken)
         {
             pawn = pool.useTpawn(gameManager.PlayTurn);
             pawn.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
@@ -34,7 +51,7 @@ public class ClickPoint : MonoBehaviour {
 
     void OnMouseExit()
     {
-        if (pawn != null && !taken)
+        if (gameManager != null && !gameManager.IsPaused && pawn != null && !taken)
         {
             pool.ReleaseTpawn(pawn);
             pawn = null;
@@ -43,7 +60,7 @@ public class ClickPoint : MonoBehaviour {
 
     void OnMouseDown()
     {
-        if (!taken && gameManager.isPlayable(this) && pawn != null)
+        if (gameManager != null && (!gameManager.IsPaused) && (!taken) && gameManager.isPlayable(this) == true && pawn != null)
         {
             pool.ReleaseTpawn(pawn);
             Vector3 position = new Vector3(gameObject.transform.position.x, 1, gameObject.transform.position.z);
@@ -52,5 +69,12 @@ public class ClickPoint : MonoBehaviour {
             taken = true;
             gameManager.Played(this);
         }
+    }
+
+    public void OnCapture()
+    {
+        pool.ReleasePawn(pawn, gameManager.PlayTurn);
+        pawn = null;
+        taken = false;
     }
 }

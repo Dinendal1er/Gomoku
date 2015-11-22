@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class SoundManager : MonoBehaviour {
@@ -36,8 +37,17 @@ public class SoundManager : MonoBehaviour {
     void Start()
     {
         AudioSource[] tmp = gameObject.GetComponents<AudioSource>();
-        if (tmp == null || tmp.Length != 2)
-            Debug.LogError("Missing audio source component"); //TODO throw exception
+        try
+        {
+            if (tmp == null || tmp.Length != 2)
+                throw new IndexOutOfRangeException("Missing audio source component");
+        }
+        catch (Exception e)
+        {
+            ErrorUI.error = e.Message;
+            LevelManager.getInstance().LoadLevel("Error");
+            Destroy(gameObject.transform.parent.gameObject);
+        }
         musicPlayer = tmp[0];
         effectPlayer = tmp[1];
         UpdateMusicLevel(OptionManager.getInstance().getMusicLevel());
